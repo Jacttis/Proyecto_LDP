@@ -8,20 +8,20 @@
 
 %%% Carga la VT de la clase B
         SetLabel VTB, Libre                                  %Creo la etiqueta para la VT de B
-        SetD Libre, initB
-        SetD Libre+1, m2B
+        SetD Libre, initB       @VTB:direccion de initB
+        SetD Libre+1, m2B       @VTB:direccion de m2B
         SetLibre Libre+3                                        %Actualizo Libre segun el tamaño de la VTB
         SetActual Libre                                         %Actualizo actual tambien
 %%% Carga la VT de la clase C
         SetLabel VTC, Libre                                     %Creo la etiqueta para la VT de C
-        SetD Libre, initC         @VTA: direccion de initC      %Pongo en la VTA la direccion la version de init que usa C (respetando el offset de met1!)
-        SetD Libre+1, m1C       @VTA: direccion de m1C      %Pongo en la VTA la direccion la version de m1 que usa C (respetando el offset de met1!)
+        SetD Libre, initC         @VTC: direccion de initC      %Pongo en la VTA la direccion la version de init que usa C (respetando el offset de met1!)
+        SetD Libre+1, m1C       @VTC: direccion de m1C      %Pongo en la VTA la direccion la version de m1 que usa C (respetando el offset de met1!)
         SetLibre Libre+3                                        %Actualizo Libre segun el tamaño de la VTC
         SetActual Libre                                         %Actualizo actual tambien
 %%% Carga la VT de la clase D
         SetLabel VTD, Libre                                     %Creo la etiqueta para la VT de D
-        SetD Libre, initD         @VTA: direccion de initD      %Pongo en la VTA la direccion la version de init que usa D (respetando el offset de met1!)
-        SetD Libre+1, m2D       @VTA: direccion de m1D      %Pongo en la VTA la direccion la version de m2 que usa D (respetando el offset de met1!)
+        SetD Libre, initD         @VTD: direccion de initD      %Pongo en la VTA la direccion la version de init que usa D (respetando el offset de met1!)
+        SetD Libre+1, m2D       @VTD: direccion de m1D      %Pongo en la VTA la direccion la version de m2 que usa D (respetando el offset de met1!)
         SetLibre Libre+3                                        %Actualizo Libre segun el tamaño de la VTD
         SetActual Libre                                         %Actualizo actual tambien
 
@@ -35,7 +35,7 @@
 
 %%%-------------Codigo de Incializacion (Llamada a main)------------------------
 %%% Llama a main y finaliza
-        SetD Libre, pc+5            @PTR    %Guardo puntero de retorno caigo en 21
+        SetD Libre, pc+5            @PTR    %Guardo puntero de retorno caigo en ??
         SetD Libre+1, actual        @ED     %Guardo enlace dinamico %main es estatico asi que no tien this!                                    
         SetActual Libre                     %Muevo actual para que apunte al RA que acabo de crear para main
         SetLibre Actual+5                   %Muevo libre segun el tamaño del RA de main (considerando las vars locales)
