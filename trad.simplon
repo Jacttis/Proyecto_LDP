@@ -11,7 +11,7 @@
         SetD Libre, initB       @VTB:direccion de initB
         SetD Libre+1, m1A       @VTB:direccion de m1A
         SetD libre+2, m2A        @VTB:direccion de m2A
-         SetD Libre+3, m2B       @VTB:direccion de m2B
+        SetD Libre+3, m2B       @VTB:direccion de m2B
         SetD libre+4, VTA       @VTB:direccion de VTA
         SetLibre Libre+6                                        %Actualizo Libre segun el tamaño de la VTB
         SetActual Libre                                         %Actualizo actual tambien
@@ -19,13 +19,20 @@
         SetLabel VTC, Libre                                     %Creo la etiqueta para la VT de C
         SetD Libre, initC         @VTC: direccion de initC      %Pongo en la VTA la direccion la version de init que usa C (respetando el offset de met1!)
         SetD Libre+1, m1C       @VTC: direccion de m1C      %Pongo en la VTA la direccion la version de m1 que usa C (respetando el offset de met1!)
-        SetLibre Libre+3                                        %Actualizo Libre segun el tamaño de la VTC
+        SetD Libre+2, m2A       @VTC:direccion de m2A
+        SetD Libre+3, m2B       @VTC:direccion de m2B
+        SetD Libre+4, VTB       @VTC:direccion de VTB
+        SetLibre Libre+6                                        %Actualizo Libre segun el tamaño de la VTC
         SetActual Libre                                         %Actualizo actual tambien
 %%% Carga la VT de la clase D
         SetLabel VTD, Libre                                     %Creo la etiqueta para la VT de D
-        SetD Libre, initD         @VTD: direccion de initD      %Pongo en la VTA la direccion la version de init que usa D (respetando el offset de met1!)
-        SetD Libre+1, m2D       @VTD: direccion de m1D      %Pongo en la VTA la direccion la version de m2 que usa D (respetando el offset de met1!)
-        SetLibre Libre+3                                        %Actualizo Libre segun el tamaño de la VTD
+        SetD Libre, initC         @VTD: direccion de initC      %Pongo en la VTA la direccion la version de init que usa D (respetando el offset de met1!)
+        SetD Libre+1, m1C       @VTD: direccion de m1C      %Pongo en la VTA la direccion la version de m2 que usa D (respetando el offset de met1!)
+        SetD Libre+2, m2D       @VTD:direccion de m2D
+        SetD Libre+3, m2B       @VTD:direccion de m2B
+        SetD Libre+4, initD     @VTD:direccion de initD
+        SetD Libre+5, VTC       @VTD:direccion de VTC
+        SetLibre Libre+7                                        %Actualizo Libre segun el tamaño de la VTD
         SetActual Libre                                         %Actualizo actual tambien
 
 %%% Carga la VT de la clase Principal
@@ -46,26 +53,52 @@
         Halt                                %Cuando termino de ejecutar main finalizo
 
 %%%--------------------Traduccion de met1 de la clase A-------------------------
-met1A   SetH D[Actual+2]+1, D[Actual+3]     @x=p            %Guardo el valor del parametro p en x  a traves de this en el RA
-        SetH D[Actual+2]+2, D[Actual+3]*5   @y=p*5          %Guardo el valor del parametro p*5 en y  a traves de this en el RA
-        SetLibre Actual                                     %Limpio la memoria del RA de met2
-        SetActual D[Libre+1]                                %Muevo Actual a donde tenia el enlase dinamico
-        Jump D[Libre]                                       %Salto a la direccion de codigo que guarde en el puntero de retorno
+met1AEjemplo    SetH D[Actual+2]+1, D[Actual+3]     @x=p            %Guardo el valor del parametro p en x  a traves de this en el RA
+                SetH D[Actual+2]+2, D[Actual+3]*5   @y=p*5          %Guardo el valor del parametro p*5 en y  a traves de this en el RA
+                SetLibre Actual                                     %Limpio la memoria del RA de met2
+                SetActual D[Libre+1]                                %Muevo Actual a donde tenia el enlase dinamico
+                Jump D[Libre]                                       %Salto a la direccion de codigo que guarde en el puntero de retorno
 %%%-----------------------------------------------------------------------------
 
-%%%--------------------Traduccion de met1 de la clase A-------------------------
-initA     SetH D[Actual+2]+1,2     @v1=2            %Guardo el valor del parametro p en x  a traves de this en el RA
-        SetH D[Actual+2]+2,0  @v1=0         %Guardo el valor del parametro p*5 en y  a traves de this en el RA
-        SetLibre Actual                                     %Limpio la memoria del RA de met2
-        SetActual D[Libre+1]                                %Muevo Actual a donde tenia el enlase dinamico
-        Jump D[Libre]                                       %Salto a la direccion de codigo que guarde en el puntero de retorno
+%%%--------------------Traduccion de init de la clase A-------------------------
+initA           SetH D[Actual+2]+1,2     @v1=2            %Guardo el valor del parametro p en x  a traves de this en el RA
+                SetH D[Actual+2]+2,0  @v2=0         %Guardo el valor del parametro p*5 en y  a traves de this en el RA
+                SetLibre Actual                                     %Limpio la memoria del RA de init
+                SetActual D[Libre+1]                                %Muevo Actual a donde tenia el enlase dinamico
+                Jump D[Libre]                                       %Salto a la direccion de codigo que guarde en el puntero de retorno
 %%%-----------------------------------------------------------------------------
 
 
-%%%--------------------Traduccion de met1 de la clase A-------------------------
-met1A   SetD Actual+3,0     @i=0            %Guardo el valor del parametro p en x  a traves de this en el RA
-        SetD Actual,1  @seguir=true         %Guardo el valor del parametro p*5 en y  a traves de this en el RA
-        SetLibre Actual                                     %Limpio la memoria del RA de met2
-        SetActual D[Libre+1]                                %Muevo Actual a donde tenia el enlase dinamico
-        Jump D[Libre]                                       %Salto a la direccion de codigo que guarde en el puntero de retorno
+%%%--------------------Traduccion de m1 de la clase A-------------------------
+m1A             SetD Actual+4,0     @i=0            %Guardo el valor 0 en la variable i
+                SetD Actual+5,1  @seguir=true         %Guardo el valor true '1' en la variable seguir
+beginWhileM1A   JumpT endWhileM1A,!(D[Actual+5] & D[Actual+4]<D[Actual+3]) @seguir & i < max  %Condicion del while si es verdadera la contra condicion salta al final del while
+                JumpT thenM1A, (D[Actual+2]+1)+ D[Actual+4] > (D[Actual+2]+2) * D[Actual+4] @ v1 + i > v2 * i     
+elseM1A         SetD Actual-1,(D[Actual+2]+1)*(D[Actual+2]+2) @return v1*v2
+                Jump retM1A
+thenM1A         SetH D[Actual+2]+2,H[D[Actual+2]+2]+D[Actual+4] @v2 = v2 + i
+                SetH D[Actual+2]+1,H[D[Actual+1]+2]+D[Actual+4] @v1 = v1 + i
+                SetD Actual+5,(D[Actual+2]+1)!=(D[Actual+2]+2) @seguir = v1 != v2;
+                SetD Actual+4,D[Actual+4]+1 @i = i+1;
+                Jump beginWhileM1A
+endWhileM1A     SetD Actual-1, (D[Actual+2]+1)+(D[Actual+2]+2)  %return de v1+v2     
+retM1A          SetLibre Actual                                     %Limpio la memoria del RA de m1
+                SetActual D[Libre+1]                                %Muevo Actual a donde tenia el enlase dinamico
+                Jump D[Libre]                                       %Salto a la direccion de codigo que guarde en el puntero de retorno
 %%%-----------------------------------------------------------------------------
+
+
+%--------------------------Traduccion de m2 de la clase A-----------------------------
+                SetLibre Libre+1  @Lugar de retorno
+                SetD Libre, PC+completar @PR
+                SetD Libre+1, Actual   @ED
+                SetD Libre+2, D[Actual+2] @this
+                SetD Libre+3, (D[Actual+2]+1)*3 @param v1*3
+                SetActual Libre               %Actualizo Actual par que apunte al RA de m1 nuevo           
+                SetLibre Libre+5              %Actalizo el libre con el tamanio del RA de m1
+                Jump D[H[D[Actual+2]+1]] %salto al codigo m1 de a
+                SetD Actual+3,D[Libre-1] @j=m1(v1*3)
+                SetD Actual-1, D[Actual+3]
+                SetLibre Actual                                     %Limpio la memoria del RA de m2
+                SetActual D[Libre+1]                                %Muevo Actual a donde tenia el enlase dinamico
+                Jump D[Libre]                                       %Salto a la direccion de codigo que guarde en el puntero de retorno
