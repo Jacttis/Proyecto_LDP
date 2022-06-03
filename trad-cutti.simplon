@@ -42,3 +42,29 @@
         Jump Main                           %Salto al codigo de main
         Halt                                %Cuando termino de ejecutar main finalizo
 
+
+%%%--------------------Traduccion de init de la clase B-------------------------
+initB   SetD Libre, pc+x                %PR
+        SetD Libre+1, Actual            %ED
+        SetD Libre+2, D[Actual+2]       %this
+        SetActual Libre                 %Actualizo Actual
+        SetLibre Actual+3               %Actualizo libre apuntando dsp del this
+        Jump D[D[H[D[Actual+2]+0]+3]+0] %Accedo a initA a traves de la referencia a VTA que tenemos en VTB
+        SetH D[Actual+2]+1, 2           %v1 = 2   
+        SetH D[Actual+2]+2, 0           %v2 = 0
+        
+        SetLibre Actual                 %Retorno de initA
+        SetActual D[Libre+1]            %same
+        Jump D[Libre]                   %same
+
+        %me falta ver como vuelvo a initB
+
+        SetH D[Actual+2]+3, 10          %v3 = 10
+
+        SetLibre Actual                 %Retorno de initB
+        SetActual D[Libre+1]            %same
+        Jump D[Libre]                   %same
+
+        %agrego un halt??
+
+        %TENEMOS QUE AGREGAR LAS REF A LAS VT PADRES
