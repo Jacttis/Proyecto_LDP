@@ -9,8 +9,11 @@
 %%% Carga la VT de la clase B
         SetLabel VTB, Libre                                  %Creo la etiqueta para la VT de B
         SetD Libre, initB       @VTB:direccion de initB
-        SetD Libre+1, m2B       @VTB:direccion de m2B
-        SetLibre Libre+3                                        %Actualizo Libre segun el tamaño de la VTB
+        SetD Libre+1, m1A       @VTB:direccion de m1A
+        SetD libre+2, m2A        @VTB:direccion de m2A
+         SetD Libre+3, m2B       @VTB:direccion de m2B
+        SetD libre+4, VTA       @VTB:direccion de VTA
+        SetLibre Libre+6                                        %Actualizo Libre segun el tamaño de la VTB
         SetActual Libre                                         %Actualizo actual tambien
 %%% Carga la VT de la clase C
         SetLabel VTC, Libre                                     %Creo la etiqueta para la VT de C
@@ -42,3 +45,27 @@
         Jump Main                           %Salto al codigo de main
         Halt                                %Cuando termino de ejecutar main finalizo
 
+%%%--------------------Traduccion de met1 de la clase A-------------------------
+met1A   SetH D[Actual+2]+1, D[Actual+3]     @x=p            %Guardo el valor del parametro p en x  a traves de this en el RA
+        SetH D[Actual+2]+2, D[Actual+3]*5   @y=p*5          %Guardo el valor del parametro p*5 en y  a traves de this en el RA
+        SetLibre Actual                                     %Limpio la memoria del RA de met2
+        SetActual D[Libre+1]                                %Muevo Actual a donde tenia el enlase dinamico
+        Jump D[Libre]                                       %Salto a la direccion de codigo que guarde en el puntero de retorno
+%%%-----------------------------------------------------------------------------
+
+%%%--------------------Traduccion de met1 de la clase A-------------------------
+initA     SetH D[Actual+2]+1,2     @v1=2            %Guardo el valor del parametro p en x  a traves de this en el RA
+        SetH D[Actual+2]+2,0  @v1=0         %Guardo el valor del parametro p*5 en y  a traves de this en el RA
+        SetLibre Actual                                     %Limpio la memoria del RA de met2
+        SetActual D[Libre+1]                                %Muevo Actual a donde tenia el enlase dinamico
+        Jump D[Libre]                                       %Salto a la direccion de codigo que guarde en el puntero de retorno
+%%%-----------------------------------------------------------------------------
+
+
+%%%--------------------Traduccion de met1 de la clase A-------------------------
+met1A   SetD Actual+3,0     @i=0            %Guardo el valor del parametro p en x  a traves de this en el RA
+        SetD Actual,1  @seguir=true         %Guardo el valor del parametro p*5 en y  a traves de this en el RA
+        SetLibre Actual                                     %Limpio la memoria del RA de met2
+        SetActual D[Libre+1]                                %Muevo Actual a donde tenia el enlase dinamico
+        Jump D[Libre]                                       %Salto a la direccion de codigo que guarde en el puntero de retorno
+%%%-----------------------------------------------------------------------------
