@@ -44,27 +44,72 @@
 
 
 %%%--------------------Traduccion de init de la clase B-------------------------
-initB   SetD Libre, pc+x                %PR
+initB   SetD Libre, pc+6                %PR
         SetD Libre+1, Actual            %ED
         SetD Libre+2, D[Actual+2]       %this
         SetActual Libre                 %Actualizo Actual
         SetLibre Actual+3               %Actualizo libre apuntando dsp del this
-        Jump D[D[H[D[Actual+2]+0]+3]+0] %Accedo a initA a traves de la referencia a VTA que tenemos en VTB
-        SetH D[Actual+2]+1, 2           %v1 = 2   
-        SetH D[Actual+2]+2, 0           %v2 = 0
-        
-        SetLibre Actual                 %Retorno de initA
-        SetActual D[Libre+1]            %same
-        Jump D[Libre]                   %same
-
-        %me falta ver como vuelvo a initB
-
+        Jump initA                      %Salto al codigo de initA
         SetH D[Actual+2]+3, 10          %v3 = 10
-
         SetLibre Actual                 %Retorno de initB
         SetActual D[Libre+1]            %same
         Jump D[Libre]                   %same
 
-        %agrego un halt??
+%%%--------------------Traduccion de init de la clase B-------------------------
+m2B     SetLibre Libre+1                                        %Espacio de retorno del this.m2()
+        SetD Libre, PC+7                                         %PR     
+        SetD Libre+1, Actual                                    %ED
+        SetD Libre+2, D[Actual+2]                               %this
+        SetD Libre+3, Actual+3                                  %int x -parametro formal
+        SetD Libre+4, Actual+4                                  %int aux -variable local
+        SetActual Libre                                         %Actualizo actual
+        SetLibre Actual+5                                       %Actualizo libre apuntando al final del RA
+        Jump m2A                                                %Salto al codigo de m2a
+        SetD Actual+4, D[Libre-1]                               %aux = this.m2() ->m2a
+        SetD Actual-1, H[D[Actual+2]+3] + D[Actual+4]/2         %return v3 + aux/2
+        SetLibre Actual
+        SetActual D[Libre+1]
+        Jump D[Libre]
 
-        %TENEMOS QUE AGREGAR LAS REF A LAS VT PADRES
+%%%----------------------------------CLASE D TRADUCCION-------------------------
+%%%--------------------Traduccion de init de la clase D-------------------------
+initD   SetD Libre, PC+7                                 %PR
+        SetD Libre+1, Actual                            %ED
+        SetD Libre+2, D[Actual+2]                       %this
+        SetD Libre+3, Actual+3                          %int x
+        SetD Libre+4, Actual+4                          %int y
+        SetActual Libre
+        SetLibre Actual+5                                     
+        Jump initC
+        SetH D[Actual+2]+1, D[Actual+3]+D[Actual+3]+D[Actual+4]+4     %v1 = x + y + 4
+        SetH D[Actual+2]+4, D[Actual+3]                    %v4 = x
+        SetH D[Actual+2]+5, D[Actual+3]+D[Actual+4]        %v5 = x+y
+
+        SetD D[Actual+2]+6, PO          %o1 = new B()
+        SetH PO, VTB                    %le agrego la VT al nuevo objeto
+        SetPO PO+4                      %muevo el PO para que entre el INST de B
+
+        Jump initB                      %salto al codigo de init B
+
+        SetLibre Actual
+        SetActual D[Libre+1]
+        Jump D[Libre]
+
+%%%--------------------Traduccion de m2 de la clase D-------------------------
+m2D     SetLibre Libre+1                %return de m2
+        SetD Libre, PC+                 %PR
+        SetD Libre+1, Actual            %ED
+        SetD Libre+2, D[Actual+2]       %this
+        SetD Libre+3, Actual+3          %int j
+        SetD Libre+4, Actual+4          %int aux
+        SetD Libre+5, H[D[Actual+2]+1] + H[D[Actual+2]+4] + (H[D[Actual+2]+5])/2     %param v1 + v4 + v5/2
+        SetActual Libre
+        SetLibre Actual+7               
+        Jump m2b
+        SetD Actual+4, D[Libre-1]       %aux= o1.m2(v1+v4+v5/2)
+        SetD Actual-1, ????
+        %...como sigue???
+        Jump m1A
+        SetD Actual+3, D[Libre-1]       %j= this.m1(aux + 11v3)
+        SetActual-?, ????
+        %...como sigue???
