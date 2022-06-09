@@ -147,9 +147,9 @@ initC           SetD Libre, PC+6 @PR
 
 m1C             JumpT thenM1C,D[Actual+3]>= ((H[D[Actual+2]+1])+(H[D[Actual+2]+2])+(H[D[Actual+2]+3])) | (D[Actual+3]==2)   @ max >= (v1 + v2 + v3) | max == 2     
 elseM1C         SetLibre Libre+1
-                SetD Libre, PC+7 @PR
+                SetD Libre, PC+c7 @PR
                 SetD Libre+1, Actual @ED
-                SetD Libre+2, D[Actual+2] @this
+                SetD Libre+2, Actual+2 @this
                 SetD Libre+3, D[Actual+3]
                 SetActual Libre
                 setLibre Actual+6
