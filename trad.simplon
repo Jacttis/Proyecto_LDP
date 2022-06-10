@@ -45,7 +45,7 @@
 
 %%%-------------Codigo de Incializacion (Llamada a main)------------------------
 %%% Llama a main y finaliza
-        SetD Libre, pc+5            @PTR    %Guardo puntero de retorno caigo en ??
+        SetD Libre, pc+5            @PTR    %Guardo puntero de retorno caigo al finalizar el Jump Main en Halt
         SetD Libre+1, actual        @ED     %Guardo enlace dinamico %main es estatico asi que no tien this!                                    
         SetActual Libre                     %Muevo actual para que apunte al RA que acabo de crear para main
         SetLibre Actual+5                   %Muevo libre segun el tamaño del RA de main (considerando las vars locales)
@@ -65,16 +65,16 @@ initA           SetH D[Actual+2]+1,2     @v1=2            %Guardo el valor del p
 %%%--------------------Traduccion de m1 de la clase A-------------------------
 m1A             SetD Actual+4,0     @i=0            %Guardo el valor 0 en la variable i
                 SetD Actual+5,1  @seguir=true         %Guardo el valor true '1' en la variable seguir
-beginWhileM1A   JumpT endWhileM1A,!(D[Actual+5] & (D[Actual+4]<D[Actual+3])) @seguir & i < max  %Condicion del while si es verdadera la contra condicion salta al final del while
-                JumpT thenM1A, ((H[D[Actual+2]+1])+ D[Actual+4])> (H[(D[Actual+2]+2)] * D[Actual+4]) @ v1 + i > v2 * i     
-elseM1A         SetD Actual-1,(H[D[Actual+2]+1])*(H[D[Actual+2]+2]) @return v1*v2
-                Jump retM1A
-thenM1A         SetH D[Actual+2]+2,H[D[Actual+2]+2]+D[Actual+4] @v2 = v2 + i
-                SetH D[Actual+2]+1,H[D[Actual+2]+1]+1 @v1 = v1 + 1
-                SetD Actual+5,(H[D[Actual+2]+1])!=(H[D[Actual+2]+2]) @seguir = v1 != v2;
-                SetD Actual+4,D[Actual+4]+1 @i = i+1;
-                Jump beginWhileM1A
-endWhileM1A     SetD Actual-1, (H[D[Actual+2]+1])+(H[D[Actual+2]+2])  @return de v1+v2     
+beginWhileM1A   JumpT pc+9,!(D[Actual+5] & (D[Actual+4]<D[Actual+3])) @seguir & i < max  %Condicion del while si es verdadera la condicion salta al final del while
+                JumpT pc+3, ((H[D[Actual+2]+1])+ D[Actual+4])> (H[(D[Actual+2]+2)] * D[Actual+4]) @ v1 + i > v2 * i     %Condicion del if si es verdadera salta al then 
+elseM1A         SetD Actual-1,(H[D[Actual+2]+1])*(H[D[Actual+2]+2]) @return v1*v2  %Else del if entra si la condicion de arriba es falsa ya que no realiza el salto
+                Jump pc+7  %Jump al retorno ya que realiza un return entonces corta la ejecucion del while y sale del if.
+thenM1A         SetH D[Actual+2]+2,H[D[Actual+2]+2]+D[Actual+4] @v2 = v2 + i %Empieza la ejecucion del then del if asignandole el nuevo valor a v2
+                SetH D[Actual+2]+1,H[D[Actual+2]+1]+1 @v1 = v1 + 1   %Actualiza el valor de v1
+                SetD Actual+5,(H[D[Actual+2]+1])!=(H[D[Actual+2]+2]) @seguir = v1 != v2;  %actualiza el valor de seguir
+                SetD Actual+4,D[Actual+4]+1 @i = i+1;   %Actualiza el valor de i 
+                Jump beginWhileM1A                      %Salta al comienzo del while sin condicion ya que realiza la comparacion en JumpT del while.
+endWhileM1A     SetD Actual-1, (H[D[Actual+2]+1])+(H[D[Actual+2]+2])  @return de v1+v2     %retorno del metodo 
 retM1A          SetLibre Actual                                     %Limpio la memoria del RA de m1
                 SetActual D[Libre+1]                                %Muevo Actual a donde tenia el enlase dinamico
                 Jump D[Libre]                                       %Salto a la direccion de codigo que guarde en el puntero de retorno
@@ -88,7 +88,7 @@ m2A             SetLibre Libre+1  @Lugar de retorno
                 SetD Libre+3, (H[D[Actual+2]+1])*3 @param v1*3
                 SetActual Libre               %Actualizo Actual par que apunte al RA de m1 nuevo           
                 SetLibre Libre+6              %Actalizo el libre con el tamanio del RA de m1
-                Jump m1A %salto al codigo m1 de a
+                Jump D[H[D[Actual+2]]+1] %salto al codigo m1 de a
                 SetD Actual+3,D[Libre-1] @j=m1(v1*3)
                 SetLibre Libre-1
                 SetD Actual-1, D[Actual+3] @return j;
@@ -106,7 +106,7 @@ initB   SetD Libre, pc+6                @PR
         SetActual Libre                 %Actualizo Actual
         SetLibre Actual+3               %Actualizo libre apuntando dsp del this
 
-        Jump initA                      %Salto al codigo de initA
+        Jump D[VTA]                      %Salto al codigo de initA
         SetH D[Actual+2]+3, 10  @v3=10    
 
         SetLibre Actual                 %Retorno de initB
@@ -121,7 +121,7 @@ m2B     SetLibre Libre+1                                        @Espacio de reto
 
         SetActual Libre                                         %Actualizo actual
         SetLibre Actual+4                                       %Actualizo libre apuntando al final del RA
-        Jump m2A                                                %Salto al codigo de m2a
+        Jump D[H[D[Actual+2]]+2]                                     %Salto al codigo de m2a
         SetD Actual+4, D[Libre-1]                               @aux = this.m2() ->m2a
         SetLibre Libre-1
         SetD Actual-1, H[D[Actual+2]+3] + (D[Actual+4]/2)         @return v3 + aux/2
@@ -137,7 +137,7 @@ initC           SetD Libre, PC+6 @PR
                 SetD Libre+2, D[Actual+2] @this
                 SetActual Libre
                 SetLibre Actual+3
-                Jump initB
+                Jump D[VTB]
                 SetH D[Actual+2]+3, 2 @v3=2
                 SetLibre Actual                                     %Limpio la memoria del RA de m2
                 SetActual D[Libre+1]                                %Muevo Actual a donde tenia el enlase dinamico
@@ -153,7 +153,7 @@ elseM1C         SetLibre Libre+1
                 SetD Libre+3, D[Actual+3]
                 SetActual Libre
                 setLibre Actual+6
-                Jump m1A
+                Jump D[VTB+1]
                 SetD Actual-1, D[Libre-1] @return super.m1(max);
                 SetLibre Libre-1
                 Jump retM1C
@@ -173,7 +173,7 @@ initD   SetD Libre, PC+6                                @PR
 
         SetActual Libre                                 %Actualizo actual para que arranque en el PR del RA
         SetLibre Actual+3                               %Actualizo libre para que apunte al fin del RA      
-        Jump initC
+        Jump D[VTC]
         
         SetH D[Actual+2]+1, D[Actual+3]+D[Actual+4]+4       @v1 = x + y + 4
         SetH D[Actual+2]+4, D[Actual+3]                      @v4 = x
@@ -190,7 +190,7 @@ initD   SetD Libre, PC+6                                @PR
         SetActual Libre
         SetLibre Actual+3
 
-        Jump initB                      %salto al codigo de init B
+        Jump D[H[D[Actual+2]]]                     %salto al codigo de init B
 
         SetLibre Actual
         SetActual D[Libre+1]
@@ -199,13 +199,13 @@ initD   SetD Libre, PC+6                                @PR
 %%%--------------------Traduccion de m2 de la clase D-------------------------
 m2D     SetLibre Libre+1                @return de m2
         SetD Libre, PC+7                 @PR
-        SetD Libre+1, Actual            @ED
+        SetD Libre+1, Actual               @ED
         SetD Libre+2, H[D[Actual+2] +6]      @this
         SetD Libre+3, H[D[Actual+2]+1] + H[D[Actual+2]+4] +((H[D[Actual+2]+5])/2)         @param=v1+v4+v5/2
         
         SetActual Libre
         SetLibre Actual+5               
-        Jump m2b
+        Jump D[H[D[Actual+2]]+3]
         SetD Actual+4, D[Libre-1]       @aux= o1.m2(v1+v4+v5/2)
         SetLibre Libre-1        
         SetLibre Libre+1                @return de m1
@@ -216,7 +216,7 @@ m2D     SetLibre Libre+1                @return de m2
 
         SetActual Libre
         SetLibre Actual+4
-        Jump m1C
+        Jump D[H[D[Actual+2]]+1]
         SetD Actual+3, D[Libre-1]       @j= this.m1(aux + 11*v3)
         SetLibre Libre-1
         SetD Actual-1, D[Actual+3]         @return j;
@@ -241,7 +241,7 @@ main    SetIn Actual+2
         SetD Libre+4,D[Actual+3] @x2
         SetActual Libre
         SetLibre Actual+5
-        Jump initD
+        Jump D[H[D[Actual+2]]+4]
         %oA.m2()
 
         SetLibre Libre+1
@@ -250,7 +250,7 @@ main    SetIn Actual+2
         SetD Libre+2,D[Actual+4] @this oA %referencia al oA
         SetActual Libre
         SetLibre Actual+5
-        Jump m2D
+        Jump D[H[D[Actual+2]]+2]
         SetOut D[Libre-1]
         SetLibre Libre-1
         SetLibre Actual                                 %Limpio la memoria del RA de main
