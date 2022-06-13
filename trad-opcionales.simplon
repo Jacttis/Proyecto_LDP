@@ -224,6 +224,23 @@ m2D     SetLibre Libre+1                @return de m2
         SetActual D[Libre+1]
         Jump D[Libre]
 
+%%%--------------------Traduccion de opD de la clase D-----------------------------------
+opD     SetLibre Libre+1        @espacio de retorno de opD
+        JumpT cod1, H[D[Actual+3]] == 1 @num == 1
+        JumpT cod2, H[D[Actual+3]] == 2 @num == 2
+        JumpT default                   
+
+cod1    SetD Actual-1, H[D[Actual+3]] + 10 @return num + 10
+        JumpT break
+
+cod2    SetD Actual-1, H[D[Actual+3]] * 10 @return num + 10
+        JumpT break
+
+default SetD Actual-1, H[D[Actual+3]] + 10 @return num
+
+break   SetLibre Actual
+        SetActual D[Libre+1]
+        Jump D[Libre]
 
 %%%--------------------Traduccion de main de la clase Principal-------------------------
 main    SetIn Actual+2 

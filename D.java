@@ -18,4 +18,17 @@ public class D extends C {
         j = this.m1(aux + 11*v3);
         return j;
     }
+
+    public int opD(int num){
+        switch (num) {
+            case 1:
+                return num * 10;
+                break;
+            case 2: 
+                return num + 10;
+                break;
+            default:
+                return num;
+        }
+    }
 }
