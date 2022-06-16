@@ -150,7 +150,7 @@ elseM1C         SetLibre Libre+1
                 SetD Libre, PC+7 @PR
                 SetD Libre+1, Actual @ED
                 SetD Libre+2, D[Actual+2] @this
-                SetD Libre+3, D[Actual+3]
+                SetD Libre+3, D[Actual+3] @param
                 SetActual Libre
                 setLibre Actual+6
                 Jump D[VTB+1]
